@@ -15,8 +15,9 @@ set -euo pipefail
 ITERATIONS=${1:-3}
 LABEL=${2:-""}
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+HOSTNAME_SHORT=$(hostname -s 2>/dev/null || hostname 2>/dev/null || echo "unknown")
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-RESULTS_DIR="${SCRIPT_DIR}/results/${TIMESTAMP}"
+RESULTS_DIR="${SCRIPT_DIR}/results/${HOSTNAME_SHORT}_${TIMESTAMP}"
 CSV_FILE="${RESULTS_DIR}/results.csv"
 LOG_FILE="${RESULTS_DIR}/bench.log"
 TEMP_DIR=""
