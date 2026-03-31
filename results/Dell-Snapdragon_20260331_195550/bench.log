@@ -1,0 +1,26 @@
+[INFO] Platform: windows
+[INFO] OS: Microsoft Windows [Version 10.0.26100.7462]
+[INFO] CPU: Virtual CPU @ 3.41GHz
+[INFO] Memory: 31GB
+[INFO] Shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+[INFO] Claude: 2.1.87 (Claude Code)
+[INFO] Node: unknown
+[INFO] Timer: EPOCHREALTIME (bash builtin)
+[INFO] Date: Tue Mar 31 19:55:51 EDT 2026
+[INFO] Iterations: 3
+[INFO] Temp repo: /tmp/cc_bench_OVZqbW
+[INFO] Repo ready: 30+ files, 3 commits, 1 uncommitted change
+[INFO] Iteration 1/1:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Iteration 1/3:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Iteration 2/3:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Iteration 3/3:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Output HTML: /c/Users/elawford/Work/ccbenchmark/results/Dell-Snapdragon_20260331_195550/report.html
+[INFO] HTML report generated: /c/Users/elawford/Work/ccbenchmark/results/Dell-Snapdragon_20260331_195550/report.html
+[INFO] Size: 4149 bytes
+[INFO] Cleaned up: /tmp/cc_bench_OVZqbW

@@ -172,6 +172,8 @@ setup_temp_repo() {
 
     cd "$TEMP_DIR"
     git init -q
+    git config user.email "bench@localhost"
+    git config user.name "Benchmark"
 
     # ── Commit 1: Initial project structure ──────────────────────────
     mkdir -p src tests docs
@@ -491,8 +493,7 @@ run_cc_test() {
     output=$("$@" 2>&1) || true
     end_ns=$(timestamp_ns)
 
-    duration_ms=$(echo "scale=1; ($end_ns - $start_ns) / 1000000" | bc)
-    [[ "$duration_ms" == .* ]] && duration_ms="0${duration_ms}"
+    duration_ms=$(awk "BEGIN {printf \"%.1f\", ($end_ns - $start_ns) / 1000000}")
 
     output_bytes=$(echo -n "$output" | wc -c | tr -d ' ')
 
@@ -577,12 +578,11 @@ run_network_test() {
 
     end_ns=$(timestamp_ns)
 
-    duration_ms=$(echo "scale=1; ($end_ns - $start_ns) / 1000000" | bc)
-    [[ "$duration_ms" == .* ]] && duration_ms="0${duration_ms}"
+    duration_ms=$(awk "BEGIN {printf \"%.1f\", ($end_ns - $start_ns) / 1000000}")
 
     ttfb_ms=""
     if [[ "$curl_timings" =~ ttfb=([0-9.]+) ]]; then
-        ttfb_ms=$(echo "scale=1; ${BASH_REMATCH[1]} * 1000" | bc)
+        ttfb_ms=$(awk "BEGIN {printf \"%.1f\", ${BASH_REMATCH[1]} * 1000}")
     fi
 
     log_to_csv "$test_name" "$CURRENT_ITER" "$CURRENT_MODE" "$duration_ms" "0" "$ttfb_ms"
@@ -722,7 +722,7 @@ main() {
     echo ""
 
     # Check prerequisites
-    for cmd in claude git bc; do
+    for cmd in claude git awk; do
         if ! command -v "$cmd" &>/dev/null; then
             echo "ERROR: Required command '$cmd' not found" >&2
             exit 1
