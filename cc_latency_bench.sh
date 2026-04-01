@@ -548,6 +548,84 @@ run_all_tests() {
         find . -name "*.py" -type f
 }
 
+# ─── Claude Code End-to-End Tests ────────────────────────────────────
+# Measures actual `claude -p` round-trip including API latency, model
+# inference, tool dispatch, and Node.js overhead.  TTFB is captured by
+# timing the first line of output from the streaming response.
+
+run_claude_test() {
+    local test_name="$1"; shift
+
+    local already=0
+    for t in "${TEST_NAMES[@]+"${TEST_NAMES[@]}"}"; do
+        [[ "$t" == "$test_name" ]] && already=1 && break
+    done
+    (( already )) || TEST_NAMES+=("$test_name")
+
+    local start_ns first_byte_ns end_ns duration_ms ttfb_ms output output_bytes
+    local line
+    first_byte_ns=""
+    output=""
+
+    start_ns=$(timestamp_ns)
+
+    # Stream output line-by-line to capture TTFB
+    while IFS= read -r line; do
+        if [[ -z "$first_byte_ns" ]]; then
+            first_byte_ns=$(timestamp_ns)
+        fi
+        output+="${line}"$'\n'
+    done < <("$@" 2>&1)
+
+    end_ns=$(timestamp_ns)
+
+    duration_ms=$(awk "BEGIN {printf \"%.1f\", ($end_ns - $start_ns) / 1000000}")
+    if [[ -n "$first_byte_ns" ]]; then
+        ttfb_ms=$(awk "BEGIN {printf \"%.1f\", ($first_byte_ns - $start_ns) / 1000000}")
+    else
+        ttfb_ms=""
+    fi
+
+    output_bytes=$(echo -n "$output" | wc -c | tr -d ' ')
+
+    log_to_csv "$test_name" "$CURRENT_ITER" "$CURRENT_MODE" "$duration_ms" "$output_bytes" "$ttfb_ms"
+    if [[ -n "$ttfb_ms" ]]; then
+        printf "    %-20s %8sms  ttfb=%sms  (%s bytes)\n" "$test_name" "$duration_ms" "$ttfb_ms" "$output_bytes"
+    else
+        printf "    %-20s %8sms  (%s bytes)\n" "$test_name" "$duration_ms" "$output_bytes"
+    fi
+}
+
+run_claude_tests() {
+    # Reset working tree
+    git checkout -- . 2>/dev/null || true
+    echo "# TODO: add caching layer" >> src/models.py
+
+    # 1. Baseline — simple text response, no tool call
+    run_claude_test "cc_baseline" \
+        claude -p "What is 2+2? Reply with just the number."
+
+    # 2. Bash tool — ask Claude to run a shell command
+    run_claude_test "cc_bash_tool" \
+        claude -p "Run: echo hello world"
+
+    # 3. Read tool — ask Claude to read a file
+    run_claude_test "cc_read_tool" \
+        claude -p "Read src/main.py and show me the first 5 lines"
+
+    # 4. Edit tool — ask Claude to edit a file
+    run_claude_test "cc_edit_tool" \
+        claude -p "Add a comment '# benchmarked' as the first line of src/utils.py"
+
+    # 5. Git tool — ask Claude to check git status
+    run_claude_test "cc_git_tool" \
+        claude -p "Show me the output of git status"
+
+    # 6. Multi-tool — prompt that requires multiple tool calls
+    run_claude_test "cc_multi_tool" \
+        claude -p "Read src/main.py, then run python3 -c 'print(2+2)' and show both results"
+}
+
 # ─── Network Latency ────────────────────────────────────────────────
 run_network_test() {
     local test_name="network_rtt"
@@ -620,7 +698,13 @@ print_summary_statistics() {
         "Test" "Min" "Mean" "Max" "StdDev" "Min" "Mean" "Max" "StdDev"
     echo "─────────────────────┼─────────────────────────────────┼─────────────────────────────────"
 
+    local printed_separator=0
     for test_name in "${TEST_NAMES[@]}"; do
+        # Print a separator before the first cc_ test
+        if [[ "$test_name" == cc_* && $printed_separator -eq 0 ]]; then
+            echo "· · · · · · · · · · ·┼· · · · · · · · · · · · · · · · ┼· · · · · · · · · · · · · · · · "
+            printed_separator=1
+        fi
         local cold warm
         cold=$(compute_stats "$test_name" "cold")
         warm=$(compute_stats "$test_name" "warm")
@@ -774,8 +858,21 @@ main() {
     done
     echo ""
 
-    # Phase 6
-    echo "Phase 6: Cleaning up temp repo..."
+    # Phase 6 — Claude Code end-to-end tests
+    echo "Phase 6: Running Claude Code end-to-end tests (${ITERATIONS} iterations)..."
+    echo "         (These invoke 'claude -p' and include API + model latency)"
+    CURRENT_MODE="warm"
+    for ((i = 1; i <= ITERATIONS; i++)); do
+        CURRENT_ITER=$i
+        log_info "CC Iteration ${i}/${ITERATIONS}:"
+        cd "$TEMP_DIR"
+        run_claude_tests
+        cd - >/dev/null
+    done
+    echo ""
+
+    # Phase 7
+    echo "Phase 7: Cleaning up temp repo..."
     # cleanup handled by EXIT trap
     echo ""
 

@@ -1,0 +1,26 @@
+[INFO] Platform: macos
+[INFO] OS: 26.4
+[INFO] CPU: Apple M5 Max
+[INFO] Memory: 128GB
+[INFO] Shell: zsh 5.9 (arm64-apple-darwin25.0)
+[INFO] Claude: 2.1.81 (Claude Code)
+[INFO] Node: v25.8.1
+[INFO] Timer: date +%s%N
+[INFO] Date: Tue Mar 31 20:42:35 EDT 2026
+[INFO] Iterations: 2
+[INFO] Temp repo: /var/folders/td/6q5srjnn7x3f_1nrbb39hq4r0000gn/T//cc_bench_GzbZ0c
+[INFO] Repo ready: 30+ files, 3 commits, 1 uncommitted change
+[INFO] Iteration 1/1:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Iteration 1/2:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Iteration 2/2:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] CC Iteration 1/2:
+[INFO] CC Iteration 2/2:
+[INFO] Output HTML: /Users/elawford/Work/ccbenchmark2/results/Eds-MacBook-Pro-16-M5_20260331_204234/report.html
+[INFO] HTML report generated: /Users/elawford/Work/ccbenchmark2/results/Eds-MacBook-Pro-16-M5_20260331_204234/report.html
+[INFO] Size: 4195 bytes
+[INFO] Cleaned up: /var/folders/td/6q5srjnn7x3f_1nrbb39hq4r0000gn/T//cc_bench_GzbZ0c

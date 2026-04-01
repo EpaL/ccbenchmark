@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Latency Bench — Comparison Dashboard</title>
+<style>
+:root {
+  --bg: #0d1117; --bg2: #161b22; --border: #30363d;
+  --fg: #c9d1d9; --fg2: #8b949e; --accent: #58a6ff;
+  --green: #56d364; --red: #f85149; --yellow: #e3b341;
+  --blue: #79c0ff; --purple: #bc8cff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Courier New", monospace; background: var(--bg); color: var(--fg); padding: 24px; }
+h1 { color: var(--accent); font-size: 1.5rem; margin-bottom: 4px; }
+.subtitle { color: var(--fg2); font-size: .85rem; margin-bottom: 24px; }
+h2 { color: var(--fg); font-size: 1.1rem; margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+h3 { color: var(--fg2); font-size: .95rem; margin: 16px 0 8px; }
+
+/* System info cards */
+.cards { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; min-width: 280px; flex: 1; }
+.card-title { color: var(--accent); font-weight: 600; font-size: .9rem; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-row { color: var(--fg2); font-size: .8rem; line-height: 1.6; }
+.card-row span { color: var(--fg); }
+
+/* Tables */
+table { border-collapse: collapse; width: 100%; margin: 8px 0 20px; font-size: .85rem; }
+th, td { padding: 6px 10px; border: 1px solid var(--border); text-align: right; white-space: nowrap; }
+th { background: var(--bg2); color: var(--accent); position: sticky; top: 0; }
+td:first-child, th:first-child { text-align: left; font-weight: 600; }
+tr:nth-child(even) { background: var(--bg2); }
+
+/* Color coding for comparison */
+.best { color: var(--green); font-weight: 600; }
+.worst { color: var(--red); }
+.only { color: var(--fg2); }
+
+/* Chart */
+.chart-wrap { margin: 16px 0; overflow-x: auto; }
+canvas { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; }
+
+/* Legend */
+.legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0 16px; font-size: .8rem; color: var(--fg2); }
+.legend-item { display: flex; align-items: center; gap: 4px; }
+.legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
+
+/* Footer */
+.footer { margin-top: 32px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--fg2); font-size: .75rem; }
+</style>
+</head>
+<body>
+<h1>Claude Code Tool Call Latency Bench</h1>
+<p class="subtitle">Comparison Dashboard</p>
+
+<div id="app"></div>
+
+<div class="footer">
+  Generated <span id="gen-time"></span> &middot;
+  <span id="run-count"></span> run(s) compared
+</div>
+
+<script>
+const RUNS = [{
+  "name": "Dell-Snapdragon_20260331_195550",
+  "sysinfo": {
+  "platform": "windows",
+  "os": "Microsoft Windows [Version 10.0.26100.7462]",
+  "cpu": "Virtual CPU @ 3.41GHz",
+  "memory_gb": 31,
+  "shell": "GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)",
+  "claude_version": "2.1.87 (Claude Code)",
+  "node_version": "unknown",
+  "timer": "EPOCHREALTIME (bash builtin)",
+  "timestamp": "2026-03-31T23:55:51Z",
+  "iterations": 3,
+  "label": ""
+},
+  "csv": `test_name,iteration,mode,duration_ms,output_bytes,ttfb_ms
+shell_cmd_init,1,cold,68.0,11,
+shell_open,1,cold,59.5,378,
+shell_spawn,1,cold,81.9,31691,
+stdout_capture,1,cold,70.0,16,
+shell_exec_init,1,cold,201.0,175,
+file_edit,1,cold,74.8,0,
+git_log_init,1,cold,69.6,156,
+git_diff,1,cold,68.5,618,
+lookup_capture,1,cold,68.7,4601,
+tool_lookup,1,cold,144.0,529,
+shell_cmd_init,1,warm,67.0,11,
+shell_open,1,warm,111.7,378,
+shell_spawn,1,warm,84.8,31691,
+stdout_capture,1,warm,68.6,16,
+shell_exec_init,1,warm,146.6,175,
+file_edit,1,warm,98.1,0,
+git_log_init,1,warm,65.0,156,
+git_diff,1,warm,67.7,618,
+lookup_capture,1,warm,69.8,4601,
+tool_lookup,1,warm,71.8,529,
+shell_cmd_init,2,warm,71.8,11,
+shell_open,2,warm,55.9,378,
+shell_spawn,2,warm,83.4,31691,
+stdout_capture,2,warm,71.4,16,
+shell_exec_init,2,warm,202.0,175,
+file_edit,2,warm,85.8,0,
+git_log_init,2,warm,69.3,156,
+git_diff,2,warm,67.2,618,
+lookup_capture,2,warm,65.1,4601,
+tool_lookup,2,warm,73.0,529,
+shell_cmd_init,3,warm,67.0,11,
+shell_open,3,warm,57.7,378,
+shell_spawn,3,warm,78.9,31691,
+stdout_capture,3,warm,71.4,16,
+shell_exec_init,3,warm,142.3,175,
+file_edit,3,warm,90.7,0,
+git_log_init,3,warm,65.4,156,
+git_diff,3,warm,67.3,618,
+lookup_capture,3,warm,64.5,4601,
+tool_lookup,3,warm,72.7,529,`
+},{
+  "name": "Eds-MacBook-Pro-16-M5_20260331_200815",
+  "sysinfo": {
+  "platform": "macos",
+  "os": "26.4",
+  "cpu": "Apple M5 Max",
+  "memory_gb": 128,
+  "shell": "zsh 5.9 (arm64-apple-darwin25.0)",
+  "claude_version": "2.1.81 (Claude Code)",
+  "node_version": "v25.8.1",
+  "timer": "date +%s%N",
+  "timestamp": "2026-04-01T00:08:15Z",
+  "iterations": 3,
+  "label": ""
+},
+  "csv": `test_name,iteration,mode,duration_ms,output_bytes,ttfb_ms
+shell_cmd_init,1,cold,4.0,11,
+shell_open,1,cold,3.6,378,
+shell_spawn,1,cold,4.8,31691,
+stdout_capture,1,cold,11.4,16,
+shell_exec_init,1,cold,17.2,4,
+file_edit,1,cold,3.9,0,
+git_log_init,1,cold,10.4,156,
+git_diff,1,cold,10.9,407,
+lookup_capture,1,cold,5.9,4601,
+tool_lookup,1,cold,5.9,529,
+shell_cmd_init,1,warm,4.3,11,
+shell_open,1,warm,3.7,378,
+shell_spawn,1,warm,5.1,31691,
+stdout_capture,1,warm,11.4,16,
+shell_exec_init,1,warm,17.0,4,
+file_edit,1,warm,4.2,0,
+git_log_init,1,warm,10.5,156,
+git_diff,1,warm,10.3,407,
+lookup_capture,1,warm,5.7,4601,
+tool_lookup,1,warm,5.8,529,
+shell_cmd_init,2,warm,5.4,11,
+shell_open,2,warm,5.0,378,
+shell_spawn,2,warm,5.0,31691,
+stdout_capture,2,warm,10.9,16,
+shell_exec_init,2,warm,16.8,4,
+file_edit,2,warm,4.1,0,
+git_log_init,2,warm,10.4,156,
+git_diff,2,warm,10.3,407,
+lookup_capture,2,warm,6.0,4601,
+tool_lookup,2,warm,5.6,529,
+shell_cmd_init,3,warm,4.2,11,
+shell_open,3,warm,3.7,378,
+shell_spawn,3,warm,4.9,31691,
+stdout_capture,3,warm,10.7,16,
+shell_exec_init,3,warm,16.6,4,
+file_edit,3,warm,4.1,0,
+git_log_init,3,warm,10.3,156,
+git_diff,3,warm,10.2,407,
+lookup_capture,3,warm,5.8,4601,
+tool_lookup,3,warm,5.5,529,`
+},{
+  "name": "Eds-MacBook-Pro-16-M5_20260331_204234",
+  "sysinfo": {
+  "platform": "macos",
+  "os": "26.4",
+  "cpu": "Apple M5 Max",
+  "memory_gb": 128,
+  "shell": "zsh 5.9 (arm64-apple-darwin25.0)",
+  "claude_version": "2.1.81 (Claude Code)",
+  "node_version": "v25.8.1",
+  "timer": "date +%s%N",
+  "timestamp": "2026-04-01T00:42:35Z",
+  "iterations": 2,
+  "label": ""
+},
+  "csv": `test_name,iteration,mode,duration_ms,output_bytes,ttfb_ms
+shell_cmd_init,1,cold,4.5,11,
+shell_open,1,cold,4.0,378,
+shell_spawn,1,cold,5.1,31691,
+stdout_capture,1,cold,11.4,16,
+shell_exec_init,1,cold,21.2,4,
+file_edit,1,cold,4.1,0,
+git_log_init,1,cold,10.4,156,
+git_diff,1,cold,10.3,407,
+lookup_capture,1,cold,6.0,4601,
+tool_lookup,1,cold,6.3,529,
+shell_cmd_init,1,warm,4.2,11,
+shell_open,1,warm,3.6,378,
+shell_spawn,1,warm,4.8,31691,
+stdout_capture,1,warm,11.3,16,
+shell_exec_init,1,warm,16.8,4,
+file_edit,1,warm,4.1,0,
+git_log_init,1,warm,10.3,156,
+git_diff,1,warm,11.3,407,
+lookup_capture,1,warm,6.4,4601,
+tool_lookup,1,warm,5.7,529,
+shell_cmd_init,2,warm,4.1,11,
+shell_open,2,warm,3.9,378,
+shell_spawn,2,warm,5.1,31691,
+stdout_capture,2,warm,11.4,16,
+shell_exec_init,2,warm,17.1,4,
+file_edit,2,warm,4.3,0,
+git_log_init,2,warm,11.0,156,
+git_diff,2,warm,12.3,407,
+lookup_capture,2,warm,6.0,4601,
+tool_lookup,2,warm,6.1,529,
+cc_baseline,1,warm,3030.4,2,2828.2
+cc_bash_tool,1,warm,7667.5,20,7383.0
+cc_read_tool,1,warm,6644.2,168,6454.9
+cc_edit_tool,1,warm,12490.6,119,12272.8
+cc_git_tool,1,warm,19566.7,157,19443.3
+cc_multi_tool,1,warm,9881.3,337,9677.0
+cc_baseline,2,warm,2701.9,2,2496.3
+cc_bash_tool,2,warm,5986.3,20,5778.4
+cc_read_tool,2,warm,15518.6,168,15401.2
+cc_edit_tool,2,warm,11600.1,169,11392.9
+cc_git_tool,2,warm,10614.7,153,10417.7
+cc_multi_tool,2,warm,11734.3,101,11573.9`
+}];
+// ─── Parse CSV rows ──────────────────────────────────────────────────
+function parseCSV(csv) {
+  const lines = csv.trim().split('\n');
+  return lines.slice(1).map(line => {
+    const c = line.split(',');
+    return { test: c[0], iter: +c[1], mode: c[2], dur: +c[3], bytes: +c[4],
+             ttfb: (c[5] && c[5] !== '') ? +c[5] : null };
+  });
+}
+
+// ─── Compute stats for a given field ─────────────────────────────────
+function stats(rows, testName, mode, field = 'dur') {
+  const v = rows.filter(r => r.test === testName && r.mode === mode && r[field] != null)
+               .map(r => r[field]);
+  if (!v.length) return null;
+  const n = v.length, s = v.reduce((a, b) => a + b, 0), mean = s / n;
+  const min = Math.min(...v), max = Math.max(...v);
+  const sd = n > 1 ? Math.sqrt(v.reduce((a, x) => a + (x - mean) ** 2, 0) / (n - 1)) : 0;
+  return { min, mean, max, sd, n };
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────
+const fmt = v => v == null ? 'N/A' : v.toFixed(1);
+const fmtS = v => v == null ? 'N/A' : (v / 1000).toFixed(2) + 's';
+const COLORS = ['#79c0ff', '#56d364', '#e3b341', '#bc8cff', '#f85149', '#ff7b72', '#79c0ff', '#d2a8ff'];
+
+// ─── Process runs ────────────────────────────────────────────────────
+const runs = RUNS.map((r, i) => ({
+  ...r,
+  rows: parseCSV(r.csv),
+  color: COLORS[i % COLORS.length],
+  shortName: r.name.replace(/_\d{8}_\d{6}$/, '')
+}));
+
+// Split tests into native and cc_ groups
+const allTests = [...new Set(runs.flatMap(r => r.rows.map(row => row.test)))];
+const nativeTests = allTests.filter(t => !t.startsWith('cc_'));
+const ccTests = allTests.filter(t => t.startsWith('cc_'));
+
+// ─── Build page ──────────────────────────────────────────────────────
+const app = document.getElementById('app');
+let html = '';
+
+// System info cards
+html += '<h2>Systems</h2><div class="cards">';
+runs.forEach((r, i) => {
+  const s = r.sysinfo;
+  html += `<div class="card" style="border-top: 3px solid ${r.color}">
+    <div class="card-title">${r.shortName}</div>
+    <div class="card-row">Platform: <span>${s.platform}</span></div>
+    <div class="card-row">OS: <span>${s.os}</span></div>
+    <div class="card-row">CPU: <span>${s.cpu}</span></div>
+    <div class="card-row">RAM: <span>${s.memory_gb}GB</span></div>
+    <div class="card-row">Shell: <span>${s.shell}</span></div>
+    <div class="card-row">Claude: <span>${s.claude_version}</span></div>
+    <div class="card-row">Timer: <span>${s.timer}</span></div>
+    <div class="card-row">Iterations: <span>${s.iterations}</span></div>
+    <div class="card-row">Date: <span>${s.timestamp}</span></div>
+  </div>`;
+});
+html += '</div>';
+
+// Legend
+html += '<div class="legend">';
+runs.forEach(r => {
+  html += `<div class="legend-item"><div class="legend-swatch" style="background:${r.color}"></div>${r.shortName}</div>`;
+});
+html += '</div>';
+
+// ─── Helper: build a comparison table ────────────────────────────────
+function buildTable(tests, mode, label, unit) {
+  let t = `<h2>${label}</h2>`;
+  t += '<table><tr><th>Test</th>';
+  runs.forEach(r => {
+    t += `<th colspan="4" style="color:${r.color}">${r.shortName}</th>`;
+  });
+  t += '</tr><tr><th></th>';
+  runs.forEach(() => { t += `<th>Min</th><th>Mean</th><th>Max</th><th>SD</th>`; });
+  t += '</tr>';
+
+  tests.forEach(test => {
+    const allS = runs.map(r => stats(r.rows, test, mode));
+    const means = allS.map(s => s ? s.mean : Infinity);
+    const bestIdx = means.indexOf(Math.min(...means));
+    const worstIdx = means.indexOf(Math.max(...means.filter(m => m < Infinity)));
+
+    t += `<tr><td>${test}</td>`;
+    allS.forEach((s, i) => {
+      if (!s) {
+        t += '<td class="only">\u2014</td><td class="only">\u2014</td><td class="only">\u2014</td><td class="only">\u2014</td>';
+      } else {
+        const cls = runs.length > 1 ? (i === bestIdx ? 'best' : i === worstIdx ? 'worst' : '') : '';
+        t += `<td class="${cls}">${fmt(s.min)}</td><td class="${cls}">${fmt(s.mean)}</td><td class="${cls}">${fmt(s.max)}</td><td class="${cls}">${fmt(s.sd)}</td>`;
+      }
+    });
+    t += '</tr>';
+  });
+  t += '</table>';
+  return t;
+}
+
+// ─── Native baseline tables ──────────────────────────────────────────
+if (nativeTests.length) {
+  html += buildTable(nativeTests, 'warm', 'Native Baseline — Warm (ms)', 'ms');
+  html += buildTable(nativeTests, 'cold', 'Native Baseline — Cold (ms)', 'ms');
+}
+
+// ─── Claude Code E2E tables (duration + TTFB) ───────────────────────
+if (ccTests.length) {
+  // Duration table
+  html += buildTable(ccTests, 'warm', 'Claude Code End-to-End — Warm Duration (ms)', 'ms');
+
+  // TTFB table
+  html += '<h2>Claude Code End-to-End — Warm TTFB (ms)</h2>';
+  html += '<table><tr><th>Test</th>';
+  runs.forEach(r => {
+    html += `<th colspan="4" style="color:${r.color}">${r.shortName}</th>`;
+  });
+  html += '</tr><tr><th></th>';
+  runs.forEach(() => { html += '<th>Min</th><th>Mean</th><th>Max</th><th>SD</th>'; });
+  html += '</tr>';
+
+  ccTests.forEach(test => {
+    const allS = runs.map(r => stats(r.rows, test, 'warm', 'ttfb'));
+    const means = allS.map(s => s ? s.mean : Infinity);
+    const bestIdx = means.indexOf(Math.min(...means));
+    const worstIdx = means.indexOf(Math.max(...means.filter(m => m < Infinity)));
+
+    html += `<tr><td>${test}</td>`;
+    allS.forEach((s, i) => {
+      if (!s) {
+        html += '<td class="only">\u2014</td><td class="only">\u2014</td><td class="only">\u2014</td><td class="only">\u2014</td>';
+      } else {
+        const cls = runs.length > 1 ? (i === bestIdx ? 'best' : i === worstIdx ? 'worst' : '') : '';
+        html += `<td class="${cls}">${fmt(s.min)}</td><td class="${cls}">${fmt(s.mean)}</td><td class="${cls}">${fmt(s.max)}</td><td class="${cls}">${fmt(s.sd)}</td>`;
+      }
+    });
+    html += '</tr>';
+  });
+  html += '</table>';
+}
+
+// ─── Bar charts (separate scales for native vs cc) ──────────────────
+function drawChart(canvasId, tests, title) {
+  html += `<h2>${title}</h2>`;
+  html += `<div class="chart-wrap"><canvas id="${canvasId}"></canvas></div>`;
+}
+
+if (nativeTests.length) drawChart('chart-native', nativeTests, 'Native Baseline — Warm Mean Latency');
+if (ccTests.length)     drawChart('chart-cc', ccTests, 'Claude Code E2E — Warm Mean Latency');
+
+app.innerHTML = html;
+
+// ─── Render a bar chart on a canvas ──────────────────────────────────
+function renderChart(canvasId, tests) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const barH = 18, groupGap = 14, labelW = 150, rightPad = 90;
+  const groupH = runs.length * barH + groupGap;
+  canvas.width = Math.max(canvas.parentElement.offsetWidth - 4, 600);
+  canvas.height = tests.length * groupH + 40;
+
+  const maxMean = Math.max(...tests.flatMap(t =>
+    runs.map(r => { const s = stats(r.rows, t, 'warm'); return s ? s.mean : 0; })
+  ));
+  const chartW = canvas.width - labelW - rightPad;
+
+  tests.forEach((test, ti) => {
+    const y0 = ti * groupH + 20;
+
+    ctx.fillStyle = '#c9d1d9';
+    ctx.font = '12px monospace';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(test, labelW - 8, y0 + (runs.length * barH) / 2);
+
+    runs.forEach((r, ri) => {
+      const s = stats(r.rows, test, 'warm');
+      if (!s) return;
+      const by = y0 + ri * barH;
+      const bw = Math.max((s.mean / maxMean) * chartW, 2);
+
+      ctx.fillStyle = r.color;
+      ctx.globalAlpha = 0.85;
+      ctx.fillRect(labelW, by, bw, barH - 2);
+      ctx.globalAlpha = 1;
+
+      // Value label — use seconds for cc_ tests if >1000ms
+      const label = s.mean >= 1000 ? (s.mean/1000).toFixed(2) + 's' : s.mean.toFixed(1) + 'ms';
+      ctx.fillStyle = '#c9d1d9';
+      ctx.font = '11px monospace';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, labelW + bw + 4, by + barH / 2);
+    });
+  });
+}
+
+if (nativeTests.length) renderChart('chart-native', nativeTests);
+if (ccTests.length)     renderChart('chart-cc', ccTests);
+
+// Timestamp
+document.getElementById('gen-time').textContent = new Date().toISOString().replace('T', ' ').slice(0, 19);
+document.getElementById('run-count').textContent = runs.length;
+</script>
+</body>
+</html>
