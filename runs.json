@@ -49,5 +49,22 @@
       "label": "Ed M5 Max"
     },
     "csv": "test_name,iteration,mode,duration_ms,output_bytes,ttfb_ms\nshell_cmd_init,1,cold,4.1,11,\nshell_open,1,cold,3.6,378,\nshell_spawn,1,cold,4.8,31691,\nstdout_capture,1,cold,11.2,16,\nshell_exec_init,1,cold,17.1,4,\nfile_edit,1,cold,4.0,0,\ngit_log_init,1,cold,11.1,156,\ngit_diff,1,cold,11.9,407,\nlookup_capture,1,cold,6.6,4601,\ntool_lookup,1,cold,5.8,529,\nshell_cmd_init,1,warm,4.5,11,\nshell_open,1,warm,3.6,378,\nshell_spawn,1,warm,5.1,31691,\nstdout_capture,1,warm,11.9,16,\nshell_exec_init,1,warm,16.9,4,\nfile_edit,1,warm,4.4,0,\ngit_log_init,1,warm,10.3,156,\ngit_diff,1,warm,10.2,407,\nlookup_capture,1,warm,5.9,4601,\ntool_lookup,1,warm,5.8,529,\nshell_cmd_init,2,warm,4.5,11,\nshell_open,2,warm,3.6,378,\nshell_spawn,2,warm,5.1,31691,\nstdout_capture,2,warm,11.0,16,\nshell_exec_init,2,warm,17.0,4,\nfile_edit,2,warm,4.3,0,\ngit_log_init,2,warm,10.3,156,\ngit_diff,2,warm,9.8,407,\nlookup_capture,2,warm,5.8,4601,\ntool_lookup,2,warm,5.6,529,\nshell_cmd_init,3,warm,4.1,11,\nshell_open,3,warm,3.5,378,\nshell_spawn,3,warm,4.7,31691,\nstdout_capture,3,warm,10.9,16,\nshell_exec_init,3,warm,16.7,4,\nfile_edit,3,warm,4.1,0,\ngit_log_init,3,warm,11.8,156,\ngit_diff,3,warm,11.6,407,\nlookup_capture,3,warm,6.1,4601,\ntool_lookup,3,warm,5.7,529,"
+  },
+  {
+    "name": "DESKTOP-97LIJI2_20260331_202824",
+    "sysinfo": {
+      "platform": "windows",
+      "os": "Microsoft Windows [Version 10.0.26200.8037]",
+      "cpu": "Intel(R) Core(TM) i9-10900KF CPU @ 3.70GHz",
+      "memory_gb": 31,
+      "shell": "Microsoft Windows [Version 10.0.26200.8037]",
+      "claude_version": "2.1.87 (Claude Code)",
+      "node_version": "v25.8.1",
+      "timer": "EPOCHREALTIME (bash builtin)",
+      "timestamp": "2026-04-01T00:28:28Z",
+      "iterations": 5,
+      "label": "Kevin 3090 (Windows/Git Bash)"
+    },
+    "csv": "test_name,iteration,mode,duration_ms,output_bytes,ttfb_ms\nshell_cmd_init,1,cold,34.7,11,\nshell_open,1,cold,26.5,378,\nshell_spawn,1,cold,45.0,31691,\nstdout_capture,1,cold,41.6,16,\nshell_exec_init,1,cold,127.7,175,\nfile_edit,1,cold,35.9,0,\ngit_log_init,1,cold,37.5,156,\ngit_diff,1,cold,41.6,618,\nlookup_capture,1,cold,38.7,4601,\ntool_lookup,1,cold,74.6,529,\nshell_cmd_init,1,warm,35.7,11,\nshell_open,1,warm,25.9,378,\nshell_spawn,1,warm,41.8,31691,\nstdout_capture,1,warm,40.9,16,\nshell_exec_init,1,warm,109.5,175,\nfile_edit,1,warm,35.8,0,\ngit_log_init,1,warm,36.4,156,\ngit_diff,1,warm,39.3,618,\nlookup_capture,1,warm,38.4,4601,\ntool_lookup,1,warm,44.0,529,\nshell_cmd_init,2,warm,35.2,11,\nshell_open,2,warm,26.3,378,\nshell_spawn,2,warm,42.3,31691,\nstdout_capture,2,warm,39.4,16,\nshell_exec_init,2,warm,97.4,175,\nfile_edit,2,warm,28.2,0,\ngit_log_init,2,warm,35.7,156,\ngit_diff,2,warm,38.4,618,\nlookup_capture,2,warm,35.8,4601,\ntool_lookup,2,warm,43.5,529,\nshell_cmd_init,3,warm,35.1,11,\nshell_open,3,warm,25.7,378,\nshell_spawn,3,warm,41.4,31691,\nstdout_capture,3,warm,38.8,16,\nshell_exec_init,3,warm,95.6,175,\nfile_edit,3,warm,30.2,0,\ngit_log_init,3,warm,39.4,156,\ngit_diff,3,warm,40.5,618,\nlookup_capture,3,warm,37.7,4601,\ntool_lookup,3,warm,45.0,529,\nshell_cmd_init,4,warm,34.9,11,\nshell_open,4,warm,25.3,378,\nshell_spawn,4,warm,41.3,31691,\nstdout_capture,4,warm,39.8,16,\nshell_exec_init,4,warm,96.8,175,\nfile_edit,4,warm,30.0,0,\ngit_log_init,4,warm,37.7,156,\ngit_diff,4,warm,40.1,618,\nlookup_capture,4,warm,46.8,4601,\ntool_lookup,4,warm,45.6,529,\nshell_cmd_init,5,warm,51.2,11,\nshell_open,5,warm,26.7,378,\nshell_spawn,5,warm,42.8,31691,\nstdout_capture,5,warm,40.2,16,\nshell_exec_init,5,warm,96.6,175,\nfile_edit,5,warm,30.0,0,\ngit_log_init,5,warm,38.7,156,\ngit_diff,5,warm,49.8,618,\nlookup_capture,5,warm,36.8,4601,\ntool_lookup,5,warm,43.5,529,"
   }
 ]
