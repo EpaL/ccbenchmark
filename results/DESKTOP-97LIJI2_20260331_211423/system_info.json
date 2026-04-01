@@ -1,0 +1,13 @@
+{
+  "platform": "windows",
+  "os": "Microsoft Windows [Version 10.0.26200.8037]",
+  "cpu": "Intel(R) Core(TM) i9-10900KF CPU @ 3.70GHz",
+  "memory_gb": 31,
+  "shell": "Microsoft Windows [Version 10.0.26200.8037]",
+  "claude_version": "2.1.89 (Claude Code)",
+  "node_version": "v25.8.1",
+  "timer": "EPOCHREALTIME (bash builtin)",
+  "timestamp": "2026-04-01T01:14:28Z",
+  "iterations": 5,
+  "label": "3090-RTX-Windows"
+}
