@@ -1,0 +1,53 @@
+[
+  {
+    "name": "Kevin-M5-Max-MBP_20260331_195920",
+    "sysinfo": {
+      "platform": "macos",
+      "os": "26.3.1",
+      "cpu": "Apple M5 Max",
+      "memory_gb": 128,
+      "shell": "zsh 5.9 (arm64-apple-darwin25.0)",
+      "claude_version": "2.1.87 (Claude Code)",
+      "node_version": "v25.8.1",
+      "timer": "date +%s%N",
+      "timestamp": "2026-03-31T23:59:20Z",
+      "iterations": 5,
+      "label": "Kevin M5 Max"
+    },
+    "csv": "test_name,iteration,mode,duration_ms,output_bytes,ttfb_ms\nshell_cmd_init,1,cold,22.4,11,\nshell_open,1,cold,3.4,378,\nshell_spawn,1,cold,7.5,31691,\nstdout_capture,1,cold,7.3,16,\nshell_exec_init,1,cold,16.4,4,\nfile_edit,1,cold,3.6,0,\ngit_log_init,1,cold,7.0,156,\ngit_diff,1,cold,7.4,407,\nlookup_capture,1,cold,5.8,4601,\ntool_lookup,1,cold,5.8,529,\nshell_cmd_init,1,warm,6.4,11,\nshell_open,1,warm,3.3,378,\nshell_spawn,1,warm,7.6,31691,\nstdout_capture,1,warm,7.0,16,\nshell_exec_init,1,warm,16.0,4,\nfile_edit,1,warm,3.6,0,\ngit_log_init,1,warm,6.7,156,\ngit_diff,1,warm,6.8,407,\nlookup_capture,1,warm,5.6,4601,\ntool_lookup,1,warm,5.3,529,\nshell_cmd_init,2,warm,6.6,11,\nshell_open,2,warm,3.4,378,\nshell_spawn,2,warm,7.3,31691,\nstdout_capture,2,warm,7.5,16,\nshell_exec_init,2,warm,16.3,4,\nfile_edit,2,warm,3.7,0,\ngit_log_init,2,warm,6.8,156,\ngit_diff,2,warm,7.0,407,\nlookup_capture,2,warm,5.4,4601,\ntool_lookup,2,warm,5.0,529,\nshell_cmd_init,3,warm,6.2,11,\nshell_open,3,warm,3.5,378,\nshell_spawn,3,warm,7.3,31691,\nstdout_capture,3,warm,7.0,16,\nshell_exec_init,3,warm,16.0,4,\nfile_edit,3,warm,3.5,0,\ngit_log_init,3,warm,6.8,156,\ngit_diff,3,warm,7.2,407,\nlookup_capture,3,warm,5.9,4601,\ntool_lookup,3,warm,5.3,529,\nshell_cmd_init,4,warm,6.5,11,\nshell_open,4,warm,3.5,378,\nshell_spawn,4,warm,7.3,31691,\nstdout_capture,4,warm,7.5,16,\nshell_exec_init,4,warm,16.1,4,\nfile_edit,4,warm,3.6,0,\ngit_log_init,4,warm,6.7,156,\ngit_diff,4,warm,7.1,407,\nlookup_capture,4,warm,5.4,4601,\ntool_lookup,4,warm,5.0,529,\nshell_cmd_init,5,warm,6.4,11,\nshell_open,5,warm,3.1,378,\nshell_spawn,5,warm,7.7,31691,\nstdout_capture,5,warm,7.7,16,\nshell_exec_init,5,warm,16.5,4,\nfile_edit,5,warm,3.6,0,\ngit_log_init,5,warm,7.1,156,\ngit_diff,5,warm,6.8,407,\nlookup_capture,5,warm,5.7,4601,\ntool_lookup,5,warm,5.1,529,"
+  },
+  {
+    "name": "Dell-Snapdragon_20260331_195550",
+    "sysinfo": {
+      "platform": "windows",
+      "os": "Microsoft Windows [Version 10.0.26100.7462]",
+      "cpu": "Virtual CPU @ 3.41GHz",
+      "memory_gb": 31,
+      "shell": "GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)",
+      "claude_version": "2.1.87 (Claude Code)",
+      "node_version": "unknown",
+      "timer": "EPOCHREALTIME (bash builtin)",
+      "timestamp": "2026-03-31T23:55:51Z",
+      "iterations": 3,
+      "label": "Ed Dell Snapdragon (WSL)"
+    },
+    "csv": "test_name,iteration,mode,duration_ms,output_bytes,ttfb_ms\nshell_cmd_init,1,cold,68.0,11,\nshell_open,1,cold,59.5,378,\nshell_spawn,1,cold,81.9,31691,\nstdout_capture,1,cold,70.0,16,\nshell_exec_init,1,cold,201.0,175,\nfile_edit,1,cold,74.8,0,\ngit_log_init,1,cold,69.6,156,\ngit_diff,1,cold,68.5,618,\nlookup_capture,1,cold,68.7,4601,\ntool_lookup,1,cold,144.0,529,\nshell_cmd_init,1,warm,67.0,11,\nshell_open,1,warm,111.7,378,\nshell_spawn,1,warm,84.8,31691,\nstdout_capture,1,warm,68.6,16,\nshell_exec_init,1,warm,146.6,175,\nfile_edit,1,warm,98.1,0,\ngit_log_init,1,warm,65.0,156,\ngit_diff,1,warm,67.7,618,\nlookup_capture,1,warm,69.8,4601,\ntool_lookup,1,warm,71.8,529,\nshell_cmd_init,2,warm,71.8,11,\nshell_open,2,warm,55.9,378,\nshell_spawn,2,warm,83.4,31691,\nstdout_capture,2,warm,71.4,16,\nshell_exec_init,2,warm,202.0,175,\nfile_edit,2,warm,85.8,0,\ngit_log_init,2,warm,69.3,156,\ngit_diff,2,warm,67.2,618,\nlookup_capture,2,warm,65.1,4601,\ntool_lookup,2,warm,73.0,529,\nshell_cmd_init,3,warm,67.0,11,\nshell_open,3,warm,57.7,378,\nshell_spawn,3,warm,78.9,31691,\nstdout_capture,3,warm,71.4,16,\nshell_exec_init,3,warm,142.3,175,\nfile_edit,3,warm,90.7,0,\ngit_log_init,3,warm,65.4,156,\ngit_diff,3,warm,67.3,618,\nlookup_capture,3,warm,64.5,4601,\ntool_lookup,3,warm,72.7,529,"
+  },
+  {
+    "name": "Eds-MacBook-Pro-16-M5_20260331_200214",
+    "sysinfo": {
+      "platform": "macos",
+      "os": "26.4",
+      "cpu": "Apple M5 Max",
+      "memory_gb": 128,
+      "shell": "zsh 5.9 (arm64-apple-darwin25.0)",
+      "claude_version": "2.1.81 (Claude Code)",
+      "node_version": "v25.8.1",
+      "timer": "date +%s%N",
+      "timestamp": "2026-04-01T00:02:14Z",
+      "iterations": 3,
+      "label": "Ed M5 Max"
+    },
+    "csv": "test_name,iteration,mode,duration_ms,output_bytes,ttfb_ms\nshell_cmd_init,1,cold,4.1,11,\nshell_open,1,cold,3.6,378,\nshell_spawn,1,cold,4.8,31691,\nstdout_capture,1,cold,11.2,16,\nshell_exec_init,1,cold,17.1,4,\nfile_edit,1,cold,4.0,0,\ngit_log_init,1,cold,11.1,156,\ngit_diff,1,cold,11.9,407,\nlookup_capture,1,cold,6.6,4601,\ntool_lookup,1,cold,5.8,529,\nshell_cmd_init,1,warm,4.5,11,\nshell_open,1,warm,3.6,378,\nshell_spawn,1,warm,5.1,31691,\nstdout_capture,1,warm,11.9,16,\nshell_exec_init,1,warm,16.9,4,\nfile_edit,1,warm,4.4,0,\ngit_log_init,1,warm,10.3,156,\ngit_diff,1,warm,10.2,407,\nlookup_capture,1,warm,5.9,4601,\ntool_lookup,1,warm,5.8,529,\nshell_cmd_init,2,warm,4.5,11,\nshell_open,2,warm,3.6,378,\nshell_spawn,2,warm,5.1,31691,\nstdout_capture,2,warm,11.0,16,\nshell_exec_init,2,warm,17.0,4,\nfile_edit,2,warm,4.3,0,\ngit_log_init,2,warm,10.3,156,\ngit_diff,2,warm,9.8,407,\nlookup_capture,2,warm,5.8,4601,\ntool_lookup,2,warm,5.6,529,\nshell_cmd_init,3,warm,4.1,11,\nshell_open,3,warm,3.5,378,\nshell_spawn,3,warm,4.7,31691,\nstdout_capture,3,warm,10.9,16,\nshell_exec_init,3,warm,16.7,4,\nfile_edit,3,warm,4.1,0,\ngit_log_init,3,warm,11.8,156,\ngit_diff,3,warm,11.6,407,\nlookup_capture,3,warm,6.1,4601,\ntool_lookup,3,warm,5.7,529,"
+  }
+]
