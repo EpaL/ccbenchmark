@@ -1,0 +1,36 @@
+[INFO] Platform: macos
+[INFO] OS: 26.3.1
+[INFO] CPU: Apple M5 Max
+[INFO] Memory: 128GB
+[INFO] Shell: zsh 5.9 (arm64-apple-darwin25.0)
+[INFO] Claude: 2.1.87 (Claude Code)
+[INFO] Node: v25.8.1
+[INFO] Timer: date +%s%N
+[INFO] Date: Tue Mar 31 21:06:28 EDT 2026
+[INFO] Iterations: 5
+[INFO] Label: Kevin-M5-Max
+[INFO] Temp repo: /var/folders/nc/zc314ns14f3gjj3ll_ktpftw0000gn/T//cc_bench_XpNwgx
+[INFO] Repo ready: 30+ files, 3 commits, 1 uncommitted change
+[INFO] Iteration 1/1:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Iteration 1/5:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Iteration 2/5:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Iteration 3/5:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Iteration 4/5:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] Iteration 5/5:
+[INFO] Skipping network_rtt (ANTHROPIC_API_KEY not set)
+[INFO] CC Iteration 1/5:
+[INFO] CC Iteration 2/5:
+[INFO] CC Iteration 3/5:
+[INFO] CC Iteration 4/5:
+[INFO] CC Iteration 5/5:
+[INFO] Output HTML: /tmp/ccbenchmark/results/khiebels-MacBook-Pro_20260331_210628/report.html
+[INFO] HTML report generated: /tmp/ccbenchmark/results/khiebels-MacBook-Pro_20260331_210628/report.html
+[INFO] Size: 5754 bytes
+[INFO] Cleaned up: /var/folders/nc/zc314ns14f3gjj3ll_ktpftw0000gn/T//cc_bench_XpNwgx

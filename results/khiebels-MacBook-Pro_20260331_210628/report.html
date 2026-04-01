@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Claude Code Latency Bench</title>
+<style>
+  body { font-family: system-ui, -apple-system, monospace; margin: 2rem; background: #0d1117; color: #c9d1d9; }
+  h1 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: .5rem; }
+  h2 { color: #8b949e; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { padding: 6px 12px; border: 1px solid #30363d; text-align: right; }
+  th { background: #161b22; color: #58a6ff; }
+  td:first-child { text-align: left; font-weight: 600; }
+  tr:nth-child(even) { background: #161b22; }
+  .meta { color: #8b949e; font-size: .85em; margin-bottom: 1.5rem; }
+  .cold { color: #79c0ff; }
+  .warm { color: #56d364; }
+</style>
+</head>
+<body>
+<h1>Claude Code Tool Call Latency Bench</h1>
+<div class="meta" id="meta"></div>
+<h2>Results</h2>
+<div id="tbl"></div>
+<script>
+const csv = `
+test_name,iteration,mode,duration_ms,output_bytes,ttfb_ms
+shell_cmd_init,1,cold,12.3,11,
+shell_open,1,cold,3.4,378,
+shell_spawn,1,cold,7.8,31691,
+stdout_capture,1,cold,7.3,16,
+shell_exec_init,1,cold,16.1,4,
+file_edit,1,cold,3.7,0,
+git_log_init,1,cold,7.5,156,
+git_diff,1,cold,7.2,407,
+lookup_capture,1,cold,5.2,4601,
+tool_lookup,1,cold,5.3,529,
+shell_cmd_init,1,warm,6.6,11,
+shell_open,1,warm,3.0,378,
+shell_spawn,1,warm,7.4,31691,
+stdout_capture,1,warm,7.1,16,
+shell_exec_init,1,warm,15.8,4,
+file_edit,1,warm,3.5,0,
+git_log_init,1,warm,7.1,156,
+git_diff,1,warm,7.0,407,
+lookup_capture,1,warm,5.2,4601,
+tool_lookup,1,warm,5.3,529,
+shell_cmd_init,2,warm,6.8,11,
+shell_open,2,warm,3.2,378,
+shell_spawn,2,warm,7.8,31691,
+stdout_capture,2,warm,7.1,16,
+shell_exec_init,2,warm,16.4,4,
+file_edit,2,warm,3.8,0,
+git_log_init,2,warm,6.9,156,
+git_diff,2,warm,7.2,407,
+lookup_capture,2,warm,5.5,4601,
+tool_lookup,2,warm,5.0,529,
+shell_cmd_init,3,warm,6.4,11,
+shell_open,3,warm,3.1,378,
+shell_spawn,3,warm,7.8,31691,
+stdout_capture,3,warm,7.2,16,
+shell_exec_init,3,warm,16.7,4,
+file_edit,3,warm,3.6,0,
+git_log_init,3,warm,7.2,156,
+git_diff,3,warm,7.0,407,
+lookup_capture,3,warm,5.9,4601,
+tool_lookup,3,warm,5.3,529,
+shell_cmd_init,4,warm,6.6,11,
+shell_open,4,warm,3.4,378,
+shell_spawn,4,warm,7.5,31691,
+stdout_capture,4,warm,7.0,16,
+shell_exec_init,4,warm,16.2,4,
+file_edit,4,warm,3.7,0,
+git_log_init,4,warm,6.9,156,
+git_diff,4,warm,7.2,407,
+lookup_capture,4,warm,5.4,4601,
+tool_lookup,4,warm,5.2,529,
+shell_cmd_init,5,warm,6.5,11,
+shell_open,5,warm,3.1,378,
+shell_spawn,5,warm,7.0,31691,
+stdout_capture,5,warm,6.9,16,
+shell_exec_init,5,warm,16.0,4,
+file_edit,5,warm,3.5,0,
+git_log_init,5,warm,7.2,156,
+git_diff,5,warm,6.9,407,
+lookup_capture,5,warm,5.4,4601,
+tool_lookup,5,warm,5.1,529,
+cc_baseline,1,warm,7544.1,2,7057.9
+cc_bash_tool,1,warm,17705.3,20,17517.9
+cc_read_tool,1,warm,15303.6,168,14933.7
+cc_edit_tool,1,warm,16351.4,160,16170.3
+cc_git_tool,1,warm,7709.5,122,7444.1
+cc_multi_tool,1,warm,14104.0,415,13868.9
+cc_baseline,2,warm,3120.8,2,2900.4
+cc_bash_tool,2,warm,6503.4,20,5981.0
+cc_read_tool,2,warm,7096.1,168,6819.0
+cc_edit_tool,2,warm,33258.6,149,33075.4
+cc_git_tool,2,warm,8424.8,126,8082.2
+cc_multi_tool,2,warm,17431.0,334,16910.5
+cc_baseline,3,warm,14862.4,2,14341.8
+cc_bash_tool,3,warm,12849.7,20,12331.7
+cc_read_tool,3,warm,10215.8,168,9886.3
+cc_edit_tool,3,warm,19041.5,173,18831.6
+cc_git_tool,3,warm,14406.4,126,13898.2
+cc_multi_tool,3,warm,22511.8,367,22209.1
+cc_baseline,4,warm,6717.3,2,6195.0
+cc_bash_tool,4,warm,9137.8,20,8613.7
+cc_read_tool,4,warm,36217.3,168,36075.2
+cc_edit_tool,4,warm,15363.7,153,15146.4
+cc_git_tool,4,warm,7625.2,122,7388.9
+cc_multi_tool,4,warm,9938.0,307,9731.0
+cc_baseline,5,warm,4066.4,2,3757.1
+cc_bash_tool,5,warm,29933.1,20,29730.1
+cc_read_tool,5,warm,12564.1,168,12305.2
+cc_edit_tool,5,warm,25528.6,188,25384.5
+cc_git_tool,5,warm,16862.4,103,16666.4
+cc_multi_tool,5,warm,9818.0,324,9580.6
+`;
+const sysinfo = {
+  "platform": "macos",
+  "os": "26.3.1",
+  "cpu": "Apple M5 Max",
+  "memory_gb": 128,
+  "shell": "zsh 5.9 (arm64-apple-darwin25.0)",
+  "claude_version": "2.1.87 (Claude Code)",
+  "node_version": "v25.8.1",
+  "timer": "date +%s%N",
+  "timestamp": "2026-04-01T01:06:28Z",
+  "iterations": 5,
+  "label": "Kevin-M5-Max"
+};
+const rows = csv.trim().split('\n').slice(1).map(r => {
+  const c = r.split(',');
+  return { test: c[0], iter: +c[1], mode: c[2], dur: +c[3], bytes: +c[4] };
+});
+document.getElementById('meta').innerHTML =
+  `${sysinfo.timestamp} &middot; OS ${sysinfo.os} &middot; ${sysinfo.cpu} &middot; ${sysinfo.memory_gb}GB RAM<br>` +
+  `Claude ${sysinfo.claude_version} &middot; Node ${sysinfo.node_version} &middot; ${sysinfo.iterations} warm iterations`;
+
+const tests = [...new Set(rows.map(r => r.test))];
+function stats(t, m) {
+  const v = rows.filter(r => r.test===t && r.mode===m).map(r => r.dur);
+  if (!v.length) return { min:'N/A', mean:'N/A', max:'N/A', sd:'N/A' };
+  const n = v.length, s = v.reduce((a,b) => a+b, 0), mn = s/n;
+  const sd = n > 1 ? Math.sqrt(v.reduce((a,x) => a+(x-mn)**2, 0)/(n-1)) : 0;
+  const f = x => typeof x === 'number' ? x.toFixed(1) : x;
+  return { min: f(Math.min(...v)), mean: f(mn), max: f(Math.max(...v)), sd: f(sd) };
+}
+
+let h = '<table>';
+h += '<tr><th rowspan=2>Test</th><th colspan=4 class="cold">Cold (ms)</th><th colspan=4 class="warm">Warm (ms)</th></tr>';
+h += '<tr><th>Min</th><th>Mean</th><th>Max</th><th>StdDev</th><th>Min</th><th>Mean</th><th>Max</th><th>StdDev</th></tr>';
+tests.forEach(t => {
+  const c = stats(t, 'cold'), w = stats(t, 'warm');
+  h += `<tr><td>${t}</td>` +
+    `<td>${c.min}</td><td>${c.mean}</td><td>${c.max}</td><td>${c.sd}</td>` +
+    `<td>${w.min}</td><td>${w.mean}</td><td>${w.max}</td><td>${w.sd}</td></tr>`;
+});
+h += '</table>';
+document.getElementById('tbl').innerHTML = h;
+</script>
+</body>
+</html>
