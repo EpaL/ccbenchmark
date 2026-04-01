@@ -1,0 +1,13 @@
+{
+  "platform": "macos",
+  "os": "26.3.1",
+  "cpu": "Apple M5 Max",
+  "memory_gb": 128,
+  "shell": "zsh 5.9 (arm64-apple-darwin25.0)",
+  "claude_version": "2.1.87 (Claude Code)",
+  "node_version": "v25.8.1",
+  "timer": "date +%s%N",
+  "timestamp": "2026-03-31T23:59:20Z",
+  "iterations": 5,
+  "label": "Kevin M5 Max"
+}
