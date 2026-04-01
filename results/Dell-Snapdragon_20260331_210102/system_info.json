@@ -1,0 +1,13 @@
+{
+  "platform": "windows",
+  "os": "Microsoft Windows [Version 10.0.26100.7462]",
+  "cpu": "Virtual CPU @ 3.41GHz",
+  "memory_gb": 31,
+  "shell": "GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)",
+  "claude_version": "2.1.87 (Claude Code)",
+  "node_version": "unknown",
+  "timer": "EPOCHREALTIME (bash builtin)",
+  "timestamp": "2026-04-01T01:01:03Z",
+  "iterations": 3,
+  "label": ""
+}

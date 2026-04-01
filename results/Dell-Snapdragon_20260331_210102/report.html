@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Claude Code Latency Bench</title>
+<style>
+  body { font-family: system-ui, -apple-system, monospace; margin: 2rem; background: #0d1117; color: #c9d1d9; }
+  h1 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: .5rem; }
+  h2 { color: #8b949e; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { padding: 6px 12px; border: 1px solid #30363d; text-align: right; }
+  th { background: #161b22; color: #58a6ff; }
+  td:first-child { text-align: left; font-weight: 600; }
+  tr:nth-child(even) { background: #161b22; }
+  .meta { color: #8b949e; font-size: .85em; margin-bottom: 1.5rem; }
+  .cold { color: #79c0ff; }
+  .warm { color: #56d364; }
+</style>
+</head>
+<body>
+<h1>Claude Code Tool Call Latency Bench</h1>
+<div class="meta" id="meta"></div>
+<h2>Results</h2>
+<div id="tbl"></div>
+<script>
+const csv = `
+test_name,iteration,mode,duration_ms,output_bytes,ttfb_ms
+shell_cmd_init,1,cold,78.9,11,
+shell_open,1,cold,54.0,378,
+shell_spawn,1,cold,79.2,31691,
+stdout_capture,1,cold,71.9,16,
+shell_exec_init,1,cold,194.7,175,
+file_edit,1,cold,85.5,0,
+git_log_init,1,cold,67.9,156,
+git_diff,1,cold,78.3,618,
+lookup_capture,1,cold,80.2,4601,
+tool_lookup,1,cold,73.7,529,
+shell_cmd_init,1,warm,82.0,11,
+shell_open,1,warm,56.4,378,
+shell_spawn,1,warm,79.3,31691,
+stdout_capture,1,warm,68.5,16,
+shell_exec_init,1,warm,164.7,175,
+file_edit,1,warm,94.7,0,
+git_log_init,1,warm,71.0,156,
+git_diff,1,warm,65.8,618,
+lookup_capture,1,warm,65.1,4601,
+tool_lookup,1,warm,71.9,529,
+shell_cmd_init,2,warm,67.1,11,
+shell_open,2,warm,56.6,378,
+shell_spawn,2,warm,81.4,31691,
+stdout_capture,2,warm,72.4,16,
+shell_exec_init,2,warm,135.8,175,
+file_edit,2,warm,58.6,0,
+git_log_init,2,warm,62.8,156,
+git_diff,2,warm,68.1,618,
+lookup_capture,2,warm,79.6,4601,
+tool_lookup,2,warm,72.6,529,
+shell_cmd_init,3,warm,68.4,11,
+shell_open,3,warm,58.1,378,
+shell_spawn,3,warm,81.0,31691,
+stdout_capture,3,warm,66.8,16,
+shell_exec_init,3,warm,171.7,175,
+file_edit,3,warm,85.2,0,
+git_log_init,3,warm,120.5,156,
+git_diff,3,warm,67.0,618,
+lookup_capture,3,warm,67.6,4601,
+tool_lookup,3,warm,72.8,529,
+cc_baseline,1,warm,3707.0,2,3423.3
+cc_bash_tool,1,warm,7706.6,20,7472.3
+cc_read_tool,1,warm,11573.6,168,11019.6
+cc_edit_tool,1,warm,15531.8,160,15250.4
+cc_git_tool,1,warm,12671.5,126,12115.3
+cc_multi_tool,1,warm,20452.0,253,20124.2
+cc_baseline,2,warm,7433.2,2,7117.8
+cc_bash_tool,2,warm,9605.4,20,9330.5
+cc_read_tool,2,warm,12852.1,168,12553.5
+cc_edit_tool,2,warm,21529.2,161,21344.4
+cc_git_tool,2,warm,15897.6,126,15429.3
+cc_multi_tool,2,warm,25792.9,286,25611.9
+cc_baseline,3,warm,10958.7,2,10679.3
+cc_bash_tool,3,warm,6282.3,20,5971.2
+cc_read_tool,3,warm,6255.1,168,5958.8
+cc_edit_tool,3,warm,24431.4,157,24126.0
+cc_git_tool,3,warm,8419.9,98,8125.1
+cc_multi_tool,3,warm,25027.2,774,24603.8
+`;
+const sysinfo = {
+  "platform": "windows",
+  "os": "Microsoft Windows [Version 10.0.26100.7462]",
+  "cpu": "Virtual CPU @ 3.41GHz",
+  "memory_gb": 31,
+  "shell": "GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)",
+  "claude_version": "2.1.87 (Claude Code)",
+  "node_version": "unknown",
+  "timer": "EPOCHREALTIME (bash builtin)",
+  "timestamp": "2026-04-01T01:01:03Z",
+  "iterations": 3,
+  "label": ""
+};
+const rows = csv.trim().split('\n').slice(1).map(r => {
+  const c = r.split(',');
+  return { test: c[0], iter: +c[1], mode: c[2], dur: +c[3], bytes: +c[4] };
+});
+document.getElementById('meta').innerHTML =
+  `${sysinfo.timestamp} &middot; OS ${sysinfo.os} &middot; ${sysinfo.cpu} &middot; ${sysinfo.memory_gb}GB RAM<br>` +
+  `Claude ${sysinfo.claude_version} &middot; Node ${sysinfo.node_version} &middot; ${sysinfo.iterations} warm iterations`;
+
+const tests = [...new Set(rows.map(r => r.test))];
+function stats(t, m) {
+  const v = rows.filter(r => r.test===t && r.mode===m).map(r => r.dur);
+  if (!v.length) return { min:'N/A', mean:'N/A', max:'N/A', sd:'N/A' };
+  const n = v.length, s = v.reduce((a,b) => a+b, 0), mn = s/n;
+  const sd = n > 1 ? Math.sqrt(v.reduce((a,x) => a+(x-mn)**2, 0)/(n-1)) : 0;
+  const f = x => typeof x === 'number' ? x.toFixed(1) : x;
+  return { min: f(Math.min(...v)), mean: f(mn), max: f(Math.max(...v)), sd: f(sd) };
+}
+
+let h = '<table>';
+h += '<tr><th rowspan=2>Test</th><th colspan=4 class="cold">Cold (ms)</th><th colspan=4 class="warm">Warm (ms)</th></tr>';
+h += '<tr><th>Min</th><th>Mean</th><th>Max</th><th>StdDev</th><th>Min</th><th>Mean</th><th>Max</th><th>StdDev</th></tr>';
+tests.forEach(t => {
+  const c = stats(t, 'cold'), w = stats(t, 'warm');
+  h += `<tr><td>${t}</td>` +
+    `<td>${c.min}</td><td>${c.mean}</td><td>${c.max}</td><td>${c.sd}</td>` +
+    `<td>${w.min}</td><td>${w.mean}</td><td>${w.max}</td><td>${w.sd}</td></tr>`;
+});
+h += '</table>';
+document.getElementById('tbl').innerHTML = h;
+</script>
+</body>
+</html>
